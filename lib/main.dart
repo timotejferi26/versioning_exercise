@@ -41,3 +41,24 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
     );
   }
 }
+
+class ExceptionHandlerWidget extends StatelessWidget {
+  const ExceptionHandlerWidget({Key? key, required this.exception}) : super(key: key);
+
+  final Object exception;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(bottom: 20.0),
+          child: Icon(Icons.error_outline, color: Colors.red, size: 40,),
+        ),
+        Text(exception.toString())
+      ],
+    );
+  }
+}
