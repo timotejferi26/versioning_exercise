@@ -41,52 +41,72 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Container(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('Add task'),
-                  content: Column(
-                    children: [
-                      TextField(
-                        controller: nameController,
-                        decoration: const InputDecoration(hintText: "Name"),
-                      ),
-                      TextField(
-                        controller: descriptionController,
-                        decoration: const InputDecoration(hintText: "Description"),
-                      ),
-                    ],
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      child: const Text('Cancel'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        nameController.clear();
-                        descriptionController.clear();
-                      },
-                    ),
-                    TextButton(
-                      child: const Text('Add'),
-                      onPressed: () {
-                        ref.read(taskListProvider.notifier).addTask(
-                            nameController.text.trimRight(),
-                            descriptionController.text.trimRight());
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
+      body: ref.watch(taskListProvider).when(
+          data: (taskList) {
+            return ListView.builder(
+              itemCount: taskList.length,
+              itemBuilder: (context, index) {
+                return CheckboxListTile(
+                  title: Text(taskList[index].name),
+                  subtitle: Text(taskList[index].description),
+                  value: taskList[index].completed,
+                  onChanged: (bool? value) {
+                    ref.read(taskListProvider.notifier).switchCompleted(taskList[index].id);
+                  },
                 );
               },
             );
           },
-          tooltip: 'Add Task',
-          child: const Icon(Icons.add),
-        )
+          error: (error, stack) {
+            return ExceptionHandlerWidget(exception: error,);
+          },
+          loading: () => const Center(child: CircularProgressIndicator(),)
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Add task'),
+                content: Column(
+                  children: [
+                    TextField(
+                      controller: nameController,
+                      decoration: const InputDecoration(hintText: "Name"),
+                    ),
+                    TextField(
+                      controller: descriptionController,
+                      decoration: const InputDecoration(hintText: "Description"),
+                    ),
+                  ],
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      nameController.clear();
+                      descriptionController.clear();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Add'),
+                    onPressed: () {
+                      ref.read(taskListProvider.notifier).addTask(
+                          nameController.text.trimRight(),
+                          descriptionController.text.trimRight());
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        tooltip: 'Add Task',
+        child: const Icon(Icons.add),
+      )
     );
   }
 }
