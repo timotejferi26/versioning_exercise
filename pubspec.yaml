@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  uuid:
 
   # state management
   flutter_riverpod:
