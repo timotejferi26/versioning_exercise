@@ -31,6 +31,10 @@ class MyHomePage extends ConsumerStatefulWidget {
 }
 
 class _MyHomePageState extends ConsumerState<MyHomePage> {
+
+  TextEditingController nameController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,6 +42,51 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Container(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Add task'),
+                  content: Column(
+                    children: [
+                      TextField(
+                        controller: nameController,
+                        decoration: const InputDecoration(hintText: "Name"),
+                      ),
+                      TextField(
+                        controller: descriptionController,
+                        decoration: const InputDecoration(hintText: "Description"),
+                      ),
+                    ],
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: const Text('Cancel'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        nameController.clear();
+                        descriptionController.clear();
+                      },
+                    ),
+                    TextButton(
+                      child: const Text('Add'),
+                      onPressed: () {
+                        ref.read(taskListProvider.notifier).addTask(
+                            nameController.text.trimRight(),
+                            descriptionController.text.trimRight());
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+          tooltip: 'Add Task',
+          child: const Icon(Icons.add),
+        )
     );
   }
 }
